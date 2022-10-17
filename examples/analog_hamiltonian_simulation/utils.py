@@ -68,23 +68,27 @@ def get_shift(times, values, pattern):
 
     return shift
                     
-def show_global_drive(drive):
+def show_global_drive(drive,axes=None,**plot_ops):
     data = {
         'amplitude [rad/s]': drive.amplitude.time_series,
         'detuning [rad/s]': drive.detuning.time_series,
         'phase [rad]': drive.phase.time_series,
     }
-    
-    fig, axes = plt.subplots(3, 1, figsize=(7, 7), sharex=True)
+
+
+    if axes is None:
+        fig, axes = plt.subplots(3, 1, figsize=(7, 7), sharex=True)
+
     for ax, data_name in zip(axes, data.keys()):
         if data_name == 'phase [rad]':
-            ax.step(data[data_name].times(), data[data_name].values(), '.-', where='post')
+            ax.step(data[data_name].times(), data[data_name].values(), '.-', where='post',**plot_ops)
         else:
-            ax.plot(data[data_name].times(), data[data_name].values(), '.-')
+            ax.plot(data[data_name].times(), data[data_name].values(), '.-',**plot_ops)
         ax.set_ylabel(data_name)
         ax.grid(ls=':')
     axes[-1].set_xlabel('time [s]')
     plt.tight_layout()
+    return axes
     
 def show_local_shift(shift):
     data = shift.magnitude.time_series
